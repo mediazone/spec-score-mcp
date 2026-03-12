@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 560" width="480" height="560" style="background:#1a1a1a;border-radius:12px">
+    <text x="240" y="24" text-anchor="middle" fill="#ccc" font-size="15" font-weight="600" font-family="system-ui, -apple-system, sans-serif">This presentation (before)</text>
+    <polygon points="240,232.5 207.5,265 240,297.5 272.5,265" fill="none" stroke="#333" stroke-width="0.5" stroke-dasharray="3,3" />
+    <polygon points="240,200 175,265 240,330 305,265" fill="none" stroke="#333" stroke-width="0.5" stroke-dasharray="3,3" />
+    <polygon points="240,167.5 142.5,265 239.99999999999997,362.5 337.5,265" fill="none" stroke="#333" stroke-width="0.5" stroke-dasharray="3,3" />
+    <polygon points="240,135 110,265 239.99999999999997,395 370,265.00000000000006" fill="none" stroke="#333" stroke-width="0.5" stroke-dasharray="none" />
+    <line x1="240" y1="265" x2="240" y2="135" stroke="#444" stroke-width="0.5" />
+    <line x1="240" y1="265" x2="110" y2="265" stroke="#444" stroke-width="0.5" />
+    <line x1="240" y1="265" x2="239.99999999999997" y2="395" stroke="#444" stroke-width="0.5" />
+    <line x1="240" y1="265" x2="370" y2="265.00000000000006" stroke="#444" stroke-width="0.5" />
+    <polygon points="240,197.01823012307855 156.33012938225053,265 240,301.6055683952654 302.7524029633121,265" fill="#eab30820" stroke="#eab308" stroke-width="2" />
+    <circle cx="240" cy="197.01823012307855" r="4" fill="#eab308" />
+    <circle cx="156.33012938225053" cy="265" r="4" fill="#eab308" />
+    <circle cx="240" cy="301.6055683952654" r="4" fill="#eab308" />
+    <circle cx="302.7524029633121" cy="265" r="4" fill="#eab308" />
+    <text x="240" y="83" text-anchor="middle" fill="#999" font-size="12" font-family="system-ui, -apple-system, sans-serif">completeness (0.52)</text>
+    <text x="104" y="270" text-anchor="start" fill="#999" font-size="12" font-family="system-ui, -apple-system, sans-serif">clarity (0.64)</text>
+    <text x="239.99999999999997" y="453" text-anchor="middle" fill="#999" font-size="12" font-family="system-ui, -apple-system, sans-serif">constraints (0.28)</text>
+    <text x="376" y="270.00000000000006" text-anchor="end" fill="#999" font-size="12" font-family="system-ui, -apple-system, sans-serif">specificity (0.48)</text>
+    <text x="240" y="475" text-anchor="middle" fill="#eab308" font-size="20" font-weight="bold" font-family="system-ui, -apple-system, sans-serif">0.730</text>
+    <rect x="80" y="506" width="320" height="34" rx="6" fill="#eab308" />
+    <text x="240" y="529" text-anchor="middle" fill="white" font-size="14" font-weight="bold" font-family="system-ui, -apple-system, sans-serif">ALMOST</text>
+  </svg>

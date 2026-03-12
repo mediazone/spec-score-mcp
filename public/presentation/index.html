@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spec Score MCP — Ron Koldeweid</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/black.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --accent: #E02B1D;
+    --accent-bright: #C4775A;
+    --text-primary: #e8e8e8;
+    --text-muted: #888888;
+    --code-bg: #1a1a2e;
+    --green: #50c878;
+    --red: #ff6b6b;
+  }
+
+  .reveal { font-family: 'Inter', sans-serif; color: var(--text-primary); }
+  .reveal .slides { text-align: left; }
+  .reveal .slides section { padding: 20px 60px; box-sizing: border-box; max-height: 1080px; display: flex !important; flex-direction: column; justify-content: center; }
+  .reveal h1, .reveal h2, .reveal h3 { font-family: 'Inter', sans-serif; font-weight: 700; color: var(--text-primary); text-transform: none; letter-spacing: -0.02em; }
+  .reveal h1 { font-size: 2.8em; font-weight: 900; line-height: 1.1; }
+  .reveal h2 { font-size: 2.0em; margin-bottom: 0.6em; line-height: 1.2; }
+  .reveal h3 { font-size: 1.3em; color: var(--accent); font-weight: 600; margin-bottom: 0.4em; }
+  .reveal p { font-size: 0.95em; line-height: 1.6; color: var(--text-muted); }
+  .reveal ul { list-style: none; padding: 0; margin: 0; }
+  .reveal ul li { font-size: 1.1em; line-height: 1.6; padding: 0.3em 0 0.3em 1.5em; position: relative; color: var(--text-primary); }
+  .reveal ul li::before { content: '—'; position: absolute; left: 0; color: var(--accent); font-weight: 600; }
+  .reveal pre { width: 100%; margin: 0.8em 0; box-shadow: none; }
+  .reveal pre code { font-family: 'JetBrains Mono', monospace; font-size: 0.75em; line-height: 1.7; padding: 1.2em 1.5em; border-radius: 12px; background: var(--code-bg); border: 1px solid #2a2a4a; }
+  .reveal code { font-family: 'JetBrains Mono', monospace; color: var(--accent-bright); background: rgba(212, 165, 116, 0.1); padding: 0.1em 0.4em; border-radius: 4px; font-size: 0.9em; }
+  .reveal pre code { color: var(--text-primary); background: var(--code-bg); }
+
+  .accent { color: var(--accent) !important; }
+  .muted { color: var(--text-muted) !important; }
+  .green { color: var(--green) !important; }
+  .red { color: var(--red) !important; }
+  .center-slide { text-align: center !important; }
+  .center-slide h1, .center-slide h2, .center-slide p { text-align: center; }
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 2em; align-items: start; }
+  .reveal .progress { color: var(--accent); }
+  .reveal .controls button { color: var(--accent); }
+
+  .tag { display: inline-block; background: rgba(212, 165, 116, 0.15); color: var(--accent-bright); padding: 0.2em 0.8em; border-radius: 20px; font-size: 0.7em; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.5em; }
+  .verdict { display: inline-block; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 1.1em; padding: 0.2em 0.8em; border-radius: 8px; }
+  .verdict.ship-it { background: rgba(80, 200, 120, 0.2); color: var(--green); border: 1px solid var(--green); }
+  .verdict.unbounded { background: rgba(255, 107, 107, 0.2); color: var(--red); border: 1px solid var(--red); }
+  .verdict.almost { background: rgba(255, 193, 7, 0.2); color: #ffc107; border: 1px solid #ffc107; }
+  .quote { font-size: 1.4em; font-style: italic; color: var(--accent-bright); border-left: 3px solid var(--accent); padding-left: 1em; margin: 1em 0; font-weight: 300; }
+  .visma-footer { position: fixed; bottom: 20px; right: 40px; font-size: 0.55em; color: #444; font-family: 'Inter', sans-serif; z-index: 100; }
+
+  .step { display: flex; align-items: baseline; gap: 0.6em; padding: 0.4em 0; }
+  .step-num { font-family: 'JetBrains Mono', monospace; color: var(--accent); font-weight: 700; font-size: 1.2em; min-width: 1.4em; }
+  .step-arrow { padding-left: 2em; color: var(--text-muted); font-size: 0.8em; }
+
+  .img-placeholder { border: 2px dashed #444; border-radius: 12px; padding: 1.5em; text-align: center; color: #666; font-size: 0.75em; font-family: 'JetBrains Mono', monospace; background: rgba(255,255,255,0.02); }
+  .img-placeholder strong { color: var(--accent); display: block; font-size: 1.2em; margin-bottom: 0.5em; }
+
+  /* Image modal */
+  .img-modal { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.92); z-index: 9999; cursor: pointer; align-items: center; justify-content: center; }
+  .img-modal.active { display: flex; }
+  .img-modal img { max-width: 92vw; max-height: 92vh; object-fit: contain; border-radius: 12px; }
+  .poc-thumb { cursor: pointer; transition: transform 0.2s; }
+  .poc-thumb:hover { transform: scale(1.03); }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- 1: TITLE -->
+<section class="center-slide" data-background-image="presentation-ghost.png" data-background-size="cover" data-background-color="#000000" data-background-opacity="0.25">
+  <h1 style="text-shadow: 0 0 60px rgba(0,0,0,0.9), 0 0 120px rgba(0,0,0,0.7);">What if your AI<br>starts <span class="accent">thinking</span>?</h1>
+  <p style="font-size: 1.3em; color: var(--text-primary); margin-top: 1em; text-shadow: 0 0 30px rgba(0,0,0,0.9);">Make sure it thinks about the <strong>right thing</strong>.</p>
+  <p class="muted" style="margin-top: 2em; text-shadow: 0 0 20px rgba(0,0,0,0.9);">Ron Koldeweid &middot; Innovation Manager @ Visma Software NL</p>
+  <p style="font-family: 'JetBrains Mono', monospace; font-size: 0.8em; color: var(--text-muted); margin-top: 0.5em; text-shadow: 0 0 20px rgba(0,0,0,0.9);">npm i -g spec-score-mcp</p>
+  <div style="position: absolute; bottom: 20px; left: 40px; background: rgba(0,0,0,0.9); padding: 8px 16px; border-radius: 4px;">
+    <p style="font-size: 0.5em; color: rgba(255,255,255,0.9); font-style: italic; margin: 0;">Source image: DIORAMA | THE SAME GHOST (official video)</p>
+  </div>
+  <aside class="notes">
+    "What if your AI starts thinking? That's the promise. But here's the problem — what is it thinking about?"
+    "If you don't define what to build, AI will define it for you. And it will be wrong."
+    "Today I'll show you how we solved that. With one MCP plugin."
+  </aside>
+</section>
+
+<!-- INTRO: WHO AM I -->
+<section style="position: relative;" data-background-color="#0a0a0a">
+  <img src="ron.png" style="position: absolute; right: 0; top: 0; height: 100%; width: auto; object-fit: contain; opacity: 0.7; pointer-events: none;">
+  <h3>Before we start</h3>
+  <h2 style="margin: 0.5em 0 0.1em;">Ron Koldeweid</h2>
+  <p style="font-size: 1em; color: var(--accent-bright); margin: 0.2em 0;">Innovation Manager</p>
+  <p style="font-size: 1em; color: var(--text-muted); margin: 0;">Visma Software BV — The Netherlands</p>
+  <p style="font-size: 1.2em; color: var(--text-primary); margin-top: 2em; line-height: 1.7; max-width: 60%;">
+    I love innovation.<br>
+    I love windsurfing, wingsurfing and kitesurfing.
+  </p>
+  <aside class="notes">
+    "Hi, I'm Ron Koldeweid, Innovation Manager at Visma Software in the Netherlands."
+    "I use VS Code with the Claude Code extension. That's how I work every day."
+    "Everything you'll see today — I built it this way."
+  </aside>
+</section>
+
+<!-- FROM MIND TO POC -->
+<section class="center-slide" data-background-color="#0a0a0a">
+  <p style="font-size: 2em; color: var(--text-primary); font-weight: 700; margin-bottom: 0.8em;">
+    From mind to POC <span style="font-size: 0.5em; font-weight: 400; color: var(--text-muted);">(Proof of Concept)</span>
+  </p>
+  <p style="font-size: 1.3em; color: var(--text-primary); margin-top: 1.2em; line-height: 1.8;">
+    Humans communicate with <span class="accent" style="font-weight: 700;">Language</span>.<br>
+    LLMs <span style="font-size: 0.7em; color: var(--text-muted);">(Large Language Models)</span> communicate with <span class="accent" style="font-weight: 700;">Language</span>.
+  </p>
+  <p style="font-size: 1.4em; color: var(--text-primary); margin-top: 1.2em; font-weight: 700;">
+    This is where Human and machine come together: <span class="accent" style="font-size: 1.2em;">LANGUAGE</span>
+  </p>
+</section>
+
+<!-- 2: HOW HUMANS THINK -->
+<section class="center-slide" data-background-color="#0a0a0a">
+  <h2 style="text-align: center; margin-bottom: 0.4em; text-shadow: 0 0 30px rgba(0,0,0,0.9);">How <span class="accent">Humans</span> think</h2>
+  <p style="font-size: 1.4em; color: var(--text-primary); line-height: 1.6; text-shadow: 0 0 30px rgba(0,0,0,0.9);">
+    You want a button. Your mind creates a button.<br>
+    You ask a human to make it. It is developed.<br>
+    But it is not what you <span class="accent">wanted</span>.
+  </p>
+  <p style="font-size: 2.4em; margin-top: 0.6em; color: var(--accent); font-weight: 900; letter-spacing: 0.05em; text-shadow: 0 0 30px rgba(0,0,0,0.9);">
+    THE LOOP
+  </p>
+  <!-- Human button loop visual -->
+  <div style="display: flex; align-items: center; justify-content: center; gap: 1.2em; margin-top: 0.8em; flex-wrap: nowrap;">
+    <!-- 1: In your head -->
+    <div style="text-align: center;">
+      <div style="background: linear-gradient(135deg, #3ECF8E, #2ba870); color: #fff; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.9em; padding: 0.5em 1.4em; border-radius: 10px; box-shadow: 0 4px 15px rgba(62,207,142,0.4);">Submit</div>
+      <p style="font-size: 0.6em; color: var(--green); margin: 0.4em 0 0; text-shadow: none;">in your head &check;</p>
+    </div>
+    <div style="color: var(--text-muted); font-size: 0.7em; text-align: center; font-family: 'JetBrains Mono', monospace; line-height: 1.4; text-shadow: none;">
+      "make it<br>blue" &rarr;
+    </div>
+    <!-- 2: Developer delivers -->
+    <div style="text-align: center;">
+      <div style="background: #2563eb; color: #fff; font-family: 'Arial', sans-serif; font-weight: 400; font-size: 0.9em; padding: 0.4em 1.4em; border-radius: 3px;">Submit</div>
+      <p style="font-size: 0.6em; color: var(--accent); margin: 0.4em 0 0; text-shadow: none;">delivered</p>
+    </div>
+    <div style="color: var(--text-muted); font-size: 0.7em; text-align: center; font-family: 'JetBrains Mono', monospace; line-height: 1.4; text-shadow: none;">
+      "fix the<br>rounding" &rarr;
+    </div>
+    <!-- 3: Fixed rounding, lost shadow -->
+    <div style="text-align: center;">
+      <div style="background: #2563eb; color: #fff; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.9em; padding: 0.5em 1.4em; border-radius: 10px;">Submit</div>
+      <p style="font-size: 0.6em; color: var(--accent); margin: 0.4em 0 0; text-shadow: none;">lost shadow</p>
+    </div>
+    <div style="color: var(--text-muted); font-size: 0.7em; text-align: center; font-family: 'JetBrains Mono', monospace; line-height: 1.4; text-shadow: none;">
+      "add the<br>shadow" &rarr;
+    </div>
+    <!-- 4: Has shadow but lost font -->
+    <div style="text-align: center;">
+      <div style="background: #2563eb; color: #fff; font-family: 'Arial', sans-serif; font-weight: 400; font-size: 0.9em; padding: 0.5em 1.4em; border-radius: 10px; box-shadow: 0 4px 15px rgba(37,99,235,0.4);">Submit</div>
+      <p style="font-size: 0.6em; color: var(--accent); margin: 0.4em 0 0; text-shadow: none;">lost font</p>
+    </div>
+    <div style="color: var(--accent); font-size: 1.2em; padding: 0 0.2em;">
+      &rarr;
+    </div>
+    <!-- 5: infinity -->
+    <div style="text-align: center;">
+      <div style="color: var(--accent); font-size: 2em; opacity: 0.6;">&infin;</div>
+    </div>
+  </div>
+  <aside class="notes">
+    "How do humans think? It starts with a vision in your head."
+    "You want a button. Your mind creates it perfectly. You ask someone to make it. But it's not what you wanted. That's the loop."
+  </aside>
+</section>
+
+<!-- 2a: THE LOOP — AI -->
+<section class="center-slide" data-background-color="#0a0a0a">
+  <h2 style="text-align: center; margin-bottom: 0.4em;">How Artificial Intelligence <span class="accent">thinks</span></h2>
+  <p style="font-size: 1.4em; color: var(--text-primary); line-height: 1.6;">
+    You ask AI for a button. AI creates a button.<br>
+    You ask it to change. AI changes it.<br>
+    But the things you liked? <span class="accent">Gone too.</span>
+  </p>
+  <p style="font-size: 2.4em; margin-top: 0.6em; color: var(--accent); font-weight: 900; letter-spacing: 0.05em;">
+    THE LOOP
+  </p>
+  <!-- Button loop visual -->
+  <div style="display: flex; align-items: center; justify-content: center; gap: 1.2em; margin-top: 0.8em; flex-wrap: nowrap;">
+    <!-- 1: Original -->
+    <div style="text-align: center;">
+      <div style="background: linear-gradient(135deg, #3ECF8E, #2ba870); color: #fff; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.9em; padding: 0.5em 1.4em; border-radius: 10px; box-shadow: 0 4px 15px rgba(62,207,142,0.4);">Submit</div>
+      <p style="font-size: 0.6em; color: var(--green); margin: 0.4em 0 0;">v1 &check;</p>
+    </div>
+    <div style="color: var(--text-muted); font-size: 0.7em; text-align: center; font-family: 'JetBrains Mono', monospace; line-height: 1.4;">
+      "make it<br>blue" &rarr;
+    </div>
+    <!-- 2: Blue but lost rounding + shadow -->
+    <div style="text-align: center;">
+      <div style="background: #2563eb; color: #fff; font-family: 'Arial', sans-serif; font-weight: 400; font-size: 0.9em; padding: 0.4em 1.4em; border-radius: 3px;">Submit</div>
+      <p style="font-size: 0.6em; color: var(--accent); margin: 0.4em 0 0;">lost rounding</p>
+    </div>
+    <div style="color: var(--text-muted); font-size: 0.7em; text-align: center; font-family: 'JetBrains Mono', monospace; line-height: 1.4;">
+      "fix the<br>rounding" &rarr;
+    </div>
+    <!-- 3: Blue rounded but lost shadow + gradient -->
+    <div style="text-align: center;">
+      <div style="background: #2563eb; color: #fff; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.9em; padding: 0.5em 1.4em; border-radius: 10px;">Submit</div>
+      <p style="font-size: 0.6em; color: var(--accent); margin: 0.4em 0 0;">lost shadow</p>
+    </div>
+    <div style="color: var(--text-muted); font-size: 0.7em; text-align: center; font-family: 'JetBrains Mono', monospace; line-height: 1.4;">
+      "add the<br>shadow" &rarr;
+    </div>
+    <!-- 4: Has shadow but lost font weight -->
+    <div style="text-align: center;">
+      <div style="background: #2563eb; color: #fff; font-family: 'Arial', sans-serif; font-weight: 400; font-size: 0.9em; padding: 0.5em 1.4em; border-radius: 10px; box-shadow: 0 4px 15px rgba(37,99,235,0.4);">Submit</div>
+      <p style="font-size: 0.6em; color: var(--accent); margin: 0.4em 0 0;">lost font</p>
+    </div>
+    <div style="color: var(--accent); font-size: 1.2em; padding: 0 0.2em;">
+      &rarr;
+    </div>
+    <!-- 5: infinity -->
+    <div style="text-align: center;">
+      <div style="color: var(--accent); font-size: 2em; opacity: 0.6;">&infin;</div>
+    </div>
+  </div>
+  <aside class="notes">
+    "You ask AI for a button. It creates a button. You ask it to change something. It changes it — but the things you liked are gone too."
+    "You fix that. Something else breaks. You fix that. Something else breaks. That's the loop."
+    "Everyone who uses AI for coding hits this. The question is: how do you escape it?"
+  </aside>
+</section>
+
+<!-- VISIONS → LANGUAGE → BLUEPRINT -->
+<section class="center-slide" data-background-image="workshop-photo.jpg" data-background-size="cover" data-background-opacity="1">
+  <div style="background: rgba(10,10,10,0.75); border-radius: 16px; padding: 1.5em 2.5em; display: inline-block;">
+  <p style="font-size: 1.4em; color: var(--text-primary); margin-bottom: 1em;">
+    From 8 minds onto paper:
+  </p>
+  <!-- Visual: vertical layout — visions → arrow → digitalize -->
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 0.8em; margin-top: 0.8em;">
+    <!-- 8 visions row -->
+    <div style="display: flex; gap: 0.3em; align-items: flex-start;">
+      <div style="text-align: center;">
+        <div style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #444; display: flex; align-items: center; justify-content: center; font-size: 1.2em;">&#128172;</div>
+        <p style="font-size: 0.5em; color: var(--accent); margin: 0.2em 0 0;">1</p>
+      </div>
+      <div style="display: flex; align-items: center; height: 50px; color: #555; font-size: 0.45em;">&#8644;</div>
+      <div style="text-align: center;">
+        <div style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #444; display: flex; align-items: center; justify-content: center; font-size: 1.2em;">&#128172;</div>
+        <p style="font-size: 0.5em; color: var(--accent); margin: 0.2em 0 0;">2</p>
+      </div>
+      <div style="display: flex; align-items: center; height: 50px; color: #555; font-size: 0.45em;">&#8644;</div>
+      <div style="text-align: center;">
+        <div style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #444; display: flex; align-items: center; justify-content: center; font-size: 1.2em;">&#128172;</div>
+        <p style="font-size: 0.5em; color: var(--accent); margin: 0.2em 0 0;">3</p>
+      </div>
+      <div style="display: flex; align-items: center; height: 50px; color: #555; font-size: 0.45em;">&#8644;</div>
+      <div style="text-align: center;">
+        <div style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #444; display: flex; align-items: center; justify-content: center; font-size: 1.2em;">&#128172;</div>
+        <p style="font-size: 0.5em; color: var(--accent); margin: 0.2em 0 0;">4</p>
+      </div>
+      <div style="display: flex; align-items: center; height: 50px; color: #555; font-size: 0.45em;">&#8644;</div>
+      <div style="text-align: center;">
+        <div style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #444; display: flex; align-items: center; justify-content: center; font-size: 1.2em;">&#128172;</div>
+        <p style="font-size: 0.5em; color: var(--accent); margin: 0.2em 0 0;">5</p>
+      </div>
+      <div style="display: flex; align-items: center; height: 50px; color: #555; font-size: 0.45em;">&#8644;</div>
+      <div style="text-align: center;">
+        <div style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #444; display: flex; align-items: center; justify-content: center; font-size: 1.2em;">&#128172;</div>
+        <p style="font-size: 0.5em; color: var(--accent); margin: 0.2em 0 0;">6</p>
+      </div>
+      <div style="display: flex; align-items: center; height: 50px; color: #555; font-size: 0.45em;">&#8644;</div>
+      <div style="text-align: center;">
+        <div style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #444; display: flex; align-items: center; justify-content: center; font-size: 1.2em;">&#128172;</div>
+        <p style="font-size: 0.5em; color: var(--accent); margin: 0.2em 0 0;">7</p>
+      </div>
+      <div style="display: flex; align-items: center; height: 50px; color: #555; font-size: 0.45em;">&#8644;</div>
+      <div style="text-align: center;">
+        <div style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #444; display: flex; align-items: center; justify-content: center; font-size: 1.2em;">&#128172;</div>
+        <p style="font-size: 0.5em; color: var(--accent); margin: 0.2em 0 0;">8</p>
+      </div>
+    </div>
+    <p style="font-size: 1.1em; color: var(--accent); font-weight: 700; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.1em;">&#8592; language &#8594;</p>
+    <!-- Arrow down -->
+    <div style="color: var(--accent-bright); font-size: 1.5em;">&#8595;</div>
+    <!-- Digitalize box -->
+    <div style="text-align: left; background: var(--code-bg); border: 2px solid var(--accent-bright); border-radius: 12px; padding: 0.7em 1.5em; font-family: 'JetBrains Mono', monospace; font-size: 0.75em; color: var(--text-muted); line-height: 1.8;">
+      <span style="color: var(--accent-bright); font-weight: 700; font-size: 1.1em;">Digitalize</span><br>
+      <span style="color: var(--text-primary);">written words</span> <span style="color: var(--green);">&check;</span><br>
+      <span style="color: var(--text-primary);">spoken words</span> <span style="color: var(--green);">&check;</span><br>
+      <span style="color: var(--text-primary);">drawings</span> <span style="color: var(--green);">&check;</span>
+    </div>
+  </div>
+  </div>
+  <aside class="notes">
+    "To get what's in your head onto paper requires language. Written down, spoken out, or visualized. That's the blueprint."
+    "Eight people, eight visions — but one blueprint. In language."
+  </aside>
+</section>
+
+<!-- 2b: STEPPING OUT -->
+<section class="center-slide" data-background-image="presentation-demo.png" data-background-size="cover" data-background-color="#000000" data-background-opacity="0.7">
+  <p style="font-size: 1.6em; color: var(--text-primary); margin-top: 0.5em; line-height: 1.8;">
+    Writing down human thoughts<br>
+    is like writing <span class="accent" style="font-weight: 700; font-size: 1.1em;">lyrics</span>. Or <span class="accent" style="font-weight: 700; font-size: 1.1em;">poems</span>.
+  </p>
+  <p style="font-size: 1.6em; color: var(--text-primary); margin-top: 1em; line-height: 1.6;">
+    They don't change.<br>
+    One loop is set in stone.
+  </p>
+  <aside class="notes">
+    "How do you escape the loop? Direction. You define exactly what you want — upfront."
+    "Blue, 10px radius, soft shadow, Inter bold. One prompt. Done. No loop."
+    "When you step out of the loop, you're in a space where you decide the rules — instead of the loop deciding for you."
+  </aside>
+</section>
+
+<!-- THE DILEMMA -->
+<section class="center-slide" data-background-color="#0a0a0a">
+  <p style="font-size: 2em; color: var(--text-primary); font-weight: 700; line-height: 1.5;">
+    Cool. It has all been <span class="accent">written down</span>!<br>
+    <span style="font-size: 0.7em; color: var(--text-muted);">But. Is it according the specs?</span>
+  </p>
+  <!-- Visual: requirements + spec → arrows → Spec Score MCP -->
+  <div style="display: flex; align-items: center; justify-content: center; gap: 1em; margin-top: 1.5em;">
+    <!-- Two inputs stacked -->
+    <div style="display: flex; flex-direction: column; gap: 0.5em;">
+      <!-- Requirements -->
+      <div style="text-align: left; background: var(--code-bg); border: 1px solid #2a2a4a; border-radius: 10px; padding: 0.5em 1em; font-family: 'JetBrains Mono', monospace; font-size: 0.6em; color: var(--text-muted); line-height: 1.7; max-width: 280px;">
+        <span style="color: var(--accent); font-weight: 600;">requirements.doc</span>
+      </div>
+      <!-- Spec -->
+      <div style="text-align: left; background: var(--code-bg); border: 1px solid #2a2a4a; border-radius: 10px; padding: 0.5em 1em; font-family: 'JetBrains Mono', monospace; font-size: 0.6em; color: var(--text-muted); line-height: 1.7; max-width: 280px;">
+        <span style="color: var(--accent); font-weight: 600;">## Button spec</span><br>
+        Green gradient background<br>
+        White text, Inter bold<br>
+        Rounded corners<br>
+        Subtle green glow on hover
+      </div>
+    </div>
+    <!-- Two arrows stacked -->
+    <div style="display: flex; flex-direction: column; gap: 2em; color: var(--green); font-size: 1.2em;">
+      <span>&rarr;</span>
+      <span>&rarr;</span>
+    </div>
+    <!-- Spec Score MCP -->
+    <div style="text-align: left; background: var(--code-bg); border: 2px solid var(--accent-bright); border-radius: 10px; padding: 0.6em 1em; font-family: 'JetBrains Mono', monospace; font-size: 0.6em; color: var(--text-muted); line-height: 1.7;">
+      <span style="color: var(--accent-bright); font-weight: 700;">Spec Score MCP</span>
+    </div>
+    <!-- Output arrow -->
+    <div style="color: var(--green); font-size: 1.2em;">&rarr;</div>
+    <!-- Score output -->
+    <div style="text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 0.7em;">
+      <span style="color: var(--green); font-weight: 700; font-size: 1.3em;">score</span>
+    </div>
+  </div>
+  <div style="margin-top: 1em; text-align: left; display: inline-block; background: var(--code-bg); border: 1px solid #2a2a4a; border-radius: 8px; padding: 0.5em 1em; font-family: 'JetBrains Mono', monospace; font-size: 0.55em; line-height: 1.8; color: var(--text-muted);">
+    <span style="color: #888;">$</span> <span style="color: var(--text-primary);">npm i -g spec-score-mcp</span><br>
+    <span style="color: #888;">$</span> <span style="color: var(--text-primary);">spec-score score requirements.doc ./my-spec.md</span>
+  </div>
+  <aside class="notes">
+    "The dilemma: has it all been written down? How do you know?"
+    "That's determined by the goal, the specs, the requirements. Spec Score takes your input and gives you a score."
+  </aside>
+</section>
+
+<!-- SPEC SCORE MCP + TWO DIAMONDS (full page) -->
+<section class="center-slide" data-background-color="#0a0a0a">
+  <p style="font-size: 2.5em; color: var(--text-primary); font-weight: 700; margin-bottom: 0.3em;">
+    <span class="accent">Spec Score MCP</span>
+  </p>
+  <p style="font-size: 0.9em; color: var(--text-muted); margin-bottom: 0.6em; font-style: italic;">
+    A balanced spec produces balanced code. An unbalanced spec produces <span class="accent">creative fiction</span>.
+  </p>
+  <p style="font-size: 0.55em; color: var(--text-muted); margin-bottom: 0.8em; letter-spacing: 0.03em; line-height: 1.8;">
+    <span style="color: var(--text-primary); font-weight: 600;">completeness</span> — Can the LLM understand the full scope? &nbsp;&middot;&nbsp;
+    <span style="color: var(--text-primary); font-weight: 600;">clarity</span> — Is there only one way to interpret this?<br>
+    <span style="color: var(--text-primary); font-weight: 600;">constraints</span> — Does the LLM know what NOT to build? &nbsp;&middot;&nbsp;
+    <span style="color: var(--text-primary); font-weight: 600;">specificity</span> — Are there concrete, testable details?
+  </p>
+  <div style="display: flex; align-items: center; justify-content: center; gap: 4em;">
+    <!-- Bad diamond -->
+    <div style="text-align: center;">
+      <svg width="420" height="420" viewBox="-60 -10 600 500" style="overflow: visible;">
+        <line x1="240" y1="40" x2="240" y2="440" stroke="#444" stroke-width="1"/>
+        <line x1="40" y1="240" x2="440" y2="240" stroke="#444" stroke-width="1"/>
+        <polygon points="240,60 350,240 240,400 100,240" fill="rgba(224,43,29,0.15)" stroke="#E02B1D" stroke-width="3"/>
+        <text x="240" y="20" text-anchor="middle" fill="#ccc" font-size="20" font-family="JetBrains Mono">completeness</text>
+        <text x="460" y="245" text-anchor="start" fill="#ccc" font-size="20" font-family="JetBrains Mono">clarity</text>
+        <text x="240" y="475" text-anchor="middle" fill="#ccc" font-size="20" font-family="JetBrains Mono">constraints</text>
+        <text x="20" y="245" text-anchor="end" fill="#ccc" font-size="20" font-family="JetBrains Mono">specificity</text>
+      </svg>
+      <p style="font-size: 1.5em; color: #E02B1D; font-weight: 700; margin-top: 0.4em;">Unbalanced</p>
+      <p style="font-size: 1.1em; color: var(--text-muted);">AI fills the gaps</p>
+    </div>
+    <!-- Good diamond -->
+    <div style="text-align: center;">
+      <svg width="420" height="420" viewBox="-60 -10 600 500" style="overflow: visible;">
+        <line x1="240" y1="40" x2="240" y2="440" stroke="#444" stroke-width="1"/>
+        <line x1="40" y1="240" x2="440" y2="240" stroke="#444" stroke-width="1"/>
+        <polygon points="240,70 400,240 240,410 80,240" fill="rgba(62,207,142,0.15)" stroke="#3ECF8E" stroke-width="3"/>
+        <text x="240" y="20" text-anchor="middle" fill="#ccc" font-size="20" font-family="JetBrains Mono">completeness</text>
+        <text x="460" y="245" text-anchor="start" fill="#ccc" font-size="20" font-family="JetBrains Mono">clarity</text>
+        <text x="240" y="475" text-anchor="middle" fill="#ccc" font-size="20" font-family="JetBrains Mono">constraints</text>
+        <text x="20" y="245" text-anchor="end" fill="#ccc" font-size="20" font-family="JetBrains Mono">specificity</text>
+      </svg>
+      <p style="font-size: 1.5em; color: var(--green); font-weight: 700; margin-top: 0.4em;">Balanced</p>
+      <p style="font-size: 1.1em; color: var(--text-muted);">AI knows what to build</p>
+    </div>
+  </div>
+  <div style="display: flex; align-items: center; justify-content: center; gap: 2em; margin-top: 1em;">
+    <!-- Score bars -->
+    <div style="text-align: left; background: var(--code-bg); border: 1px solid #2a2a4a; border-radius: 8px; padding: 0.6em 1.2em; font-family: 'JetBrains Mono', monospace; font-size: 0.5em; line-height: 1.6; color: var(--text-muted);">
+      completeness &nbsp;&nbsp; <span style="color: var(--accent);">█████████████</span><span style="color: #444;">░░░░░░░</span> &nbsp; 0.66<br>
+      clarity &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: var(--accent);">████████████</span><span style="color: #444;">░░░░░░░░</span> &nbsp; 0.58<br>
+      constraints &nbsp;&nbsp; <span style="color: #E02B1D;">██</span><span style="color: #444;">░░░░░░░░░░░░░░░░░░</span> &nbsp; <span style="color: #E02B1D;">0.12</span><br>
+      specificity &nbsp;&nbsp; <span style="color: var(--accent);">█████████</span><span style="color: #444;">░░░░░░░░░░░</span> &nbsp; 0.46
+    </div>
+    <!-- Balanced score bars -->
+    <div style="text-align: left; background: var(--code-bg); border: 1px solid #2a2a4a; border-radius: 8px; padding: 0.6em 1.2em; font-family: 'JetBrains Mono', monospace; font-size: 0.5em; line-height: 1.6; color: var(--text-muted);">
+      completeness &nbsp;&nbsp; <span style="color: var(--green);">████████████████</span><span style="color: #444;">░░░░</span> &nbsp; <span style="color: var(--green);">0.82</span><br>
+      clarity &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: var(--green);">███████████████</span><span style="color: #444;">░░░░░</span> &nbsp; <span style="color: var(--green);">0.78</span><br>
+      constraints &nbsp;&nbsp; <span style="color: var(--green);">██████████████</span><span style="color: #444;">░░░░░░</span> &nbsp; <span style="color: var(--green);">0.74</span><br>
+      specificity &nbsp;&nbsp; <span style="color: var(--green);">███████████████</span><span style="color: #444;">░░░░░</span> &nbsp; <span style="color: var(--green);">0.76</span>
+    </div>
+  </div>
+</section>
+
+<!-- NOW FEED THE LLM -->
+<section class="center-slide" data-background-color="#0a0a0a">
+  <p style="font-size: 2em; color: var(--green); font-weight: 700;">
+    Balanced? Now feed this to the <span style="color: var(--text-primary);">LLM</span>
+  </p>
+  <div style="margin-top: 1.5em;">
+    <svg width="360" height="360" viewBox="-60 -10 600 500" style="overflow: visible;">
+      <line x1="240" y1="40" x2="240" y2="440" stroke="#444" stroke-width="1"/>
+      <line x1="40" y1="240" x2="440" y2="240" stroke="#444" stroke-width="1"/>
+      <polygon points="240,70 400,240 240,410 80,240" fill="rgba(62,207,142,0.15)" stroke="#3ECF8E" stroke-width="3"/>
+      <text x="240" y="20" text-anchor="middle" fill="#ccc" font-size="20" font-family="JetBrains Mono">completeness</text>
+      <text x="460" y="245" text-anchor="start" fill="#ccc" font-size="20" font-family="JetBrains Mono">clarity</text>
+      <text x="240" y="475" text-anchor="middle" fill="#ccc" font-size="20" font-family="JetBrains Mono">constraints</text>
+      <text x="20" y="245" text-anchor="end" fill="#ccc" font-size="20" font-family="JetBrains Mono">specificity</text>
+    </svg>
+  </div>
+  <!-- Spec + arrow + perfect button -->
+  <div style="display: flex; align-items: center; justify-content: center; gap: 1.2em; margin-top: 1.2em;">
+    <div style="text-align: left; background: var(--code-bg); border: 1px solid #2a2a4a; border-radius: 10px; padding: 0.4em 0.8em; font-family: 'JetBrains Mono', monospace; font-size: 0.55em; color: var(--text-muted); line-height: 1.7;">
+      <span style="color: var(--accent); font-weight: 600;">## Button spec</span><br>
+      Green gradient background<br>
+      White text, Inter bold<br>
+      Rounded corners<br>
+      Subtle green glow on hover
+    </div>
+    <span style="font-size: 1em; color: var(--green);">&rarr;</span>
+    <div style="text-align: center;">
+      <div style="background: linear-gradient(135deg, #3ECF8E, #2ba870); color: #fff; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 1.1em; padding: 0.5em 1.6em; border-radius: 10px; box-shadow: 0 4px 15px rgba(62,207,142,0.4);">Submit</div>
+      <p style="font-size: 0.65em; color: var(--green); margin: 0.4em 0 0;">no hallucination &check;</p>
+    </div>
+  </div>
+  <p style="font-size: 1.1em; color: var(--text-muted); margin-top: 0.8em;">
+    MCP <span style="font-size: 0.8em;">(Model Context Protocol)</span> = agent protocol
+  </p>
+</section>
+
+<!-- HOW I BUILD POCs -->
+<section data-background-color="#0a0a0a" style="display: flex !important; flex-direction: column; justify-content: center; height: 100%;">
+  <h2 style="margin-bottom: 0.2em;">This is how <span class="accent">we</span> build <span class="accent">POCs</span> <span style="font-size: 0.5em; font-weight: 400; color: var(--text-muted);">(Proof of Concepts)</span></h2>
+  <p style="font-size: 1.3em; color: var(--text-primary); margin-bottom: 0.6em;">Super fast. From idea to working product.</p>
+  <!-- Tools row -->
+  <div style="display: flex; gap: 1.2em; margin-bottom: 0.8em;">
+    <div style="background: rgba(224,43,29,0.12); border: 1px solid var(--accent); border-radius: 10px; padding: 0.5em 1.2em; text-align: center;">
+      <span style="font-size: 1em; font-weight: 700; color: var(--text-primary);">Claude Code</span>
+    </div>
+    <div style="background: rgba(62,207,142,0.1); border: 1px solid #3ECF8E; border-radius: 10px; padding: 0.5em 1.2em; text-align: center;">
+      <span style="font-size: 1em; font-weight: 700; color: #3ECF8E;">Supabase</span>
+      <span style="font-size: 0.7em; color: var(--text-muted); display: block;">PostgreSQL</span>
+    </div>
+    <div style="background: rgba(56,189,248,0.1); border: 1px solid #38bdf8; border-radius: 10px; padding: 0.5em 1.2em; text-align: center;">
+      <span style="font-size: 1em; font-weight: 700; color: #38bdf8;">React</span>
+      <span style="font-size: 0.7em; color: var(--text-muted); display: block;">Tailwind</span>
+    </div>
+    <div style="background: rgba(196,119,90,0.12); border: 1px solid var(--accent-bright); border-radius: 10px; padding: 0.5em 1.2em; text-align: center;">
+      <span style="font-size: 1em; font-weight: 700; color: var(--accent-bright);">MCP</span>
+      <span style="font-size: 0.6em; color: var(--text-muted); display: block;">Agent Protocol</span>
+    </div>
+  </div>
+  <!-- POC screenshots grid -->
+  <div style="display: grid; grid-template-columns: 1fr 0.6fr 1fr; gap: 1em; align-items: start; flex: 1;">
+    <div style="text-align: center;">
+      <img src="poc-1.png" class="poc-thumb" style="max-height: 680px; width: auto; border-radius: 12px; border: 1px solid #2a2a4a;">
+      <p style="font-size: 0.7em; color: var(--text-muted); margin-top: 0.3em;">PreCount AI Dashboard</p>
+    </div>
+    <div style="text-align: center;">
+      <img src="poc-2.png" class="poc-thumb" style="max-height: 680px; width: auto; border-radius: 12px; border: 1px solid #2a2a4a;">
+      <p style="font-size: 0.7em; color: var(--text-muted); margin-top: 0.3em;">Receipt Scanner App</p>
+    </div>
+    <div style="text-align: center;">
+      <img src="poc-3.png" class="poc-thumb" style="max-height: 680px; width: auto; border-radius: 12px; border: 1px solid #2a2a4a;">
+      <p style="font-size: 0.7em; color: var(--text-muted); margin-top: 0.3em;">AccountView Offerte Tool</p>
+    </div>
+  </div>
+  <aside class="notes">
+    "This is how I build POCs. Super fast. Claude Code writes the code. Supabase runs the backend. React and Tailwind for the frontend. MCP connects everything."
+    "Let me show you a few things I built this way."
+  </aside>
+</section>
+
+</div>
+</div>
+
+<!-- Image modal overlay -->
+<div class="img-modal" id="imgModal" onclick="this.classList.remove('active')">
+  <img id="imgModalSrc" src="" onclick="event.stopPropagation()">
+  <div style="position: absolute; top: 30px; right: 40px; color: #fff; font-size: 2em; cursor: pointer; opacity: 0.6; font-family: 'Inter', sans-serif;" onclick="document.getElementById('imgModal').classList.remove('active')">&times;</div>
+</div>
+
+<div class="visma-footer">Visma &middot; 12 March 2026</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script>
+  // Image modal
+  document.querySelectorAll('.poc-thumb').forEach(img => {
+    img.addEventListener('click', e => {
+      e.stopPropagation();
+      document.getElementById('imgModalSrc').src = img.src;
+      document.getElementById('imgModal').classList.add('active');
+    });
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && document.getElementById('imgModal').classList.contains('active')) {
+      e.stopImmediatePropagation();
+      document.getElementById('imgModal').classList.remove('active');
+    }
+  }, true);
+
+  Reveal.initialize({
+    hash: true,
+    controls: true,
+    progress: true,
+    center: true,
+    transition: 'fade',
+    transitionSpeed: 'slow',
+    backgroundTransition: 'fade',
+    width: 1920,
+    height: 1080,
+    margin: 0.04,
+    overview: false,
+    keyboard: { 27: null },
+  });
+</script>
+</body>
+</html>

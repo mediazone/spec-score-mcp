@@ -369,55 +369,58 @@
 
 <!-- SPEC SCORE MCP + TWO DIAMONDS (full page) -->
 <section class="center-slide" data-background-color="#0a0a0a">
-  <p style="font-size: 2.5em; color: var(--text-primary); font-weight: 700; margin-bottom: 0.3em;">
+  <p style="font-size: 2em; color: var(--text-primary); font-weight: 700; margin-bottom: 0.1em;">
     <span class="accent">Spec Score MCP</span>
   </p>
-  <p style="font-size: 0.7em; color: var(--text-muted); margin-bottom: 0.8em; letter-spacing: 0.05em;">
-    <span style="color: var(--text-primary); font-weight: 600;">completeness</span> &middot;
-    <span style="color: var(--text-primary); font-weight: 600;">clarity</span> &middot;
-    <span style="color: var(--text-primary); font-weight: 600;">constraints</span> &middot;
-    <span style="color: var(--text-primary); font-weight: 600;">specificity</span>
+  <p style="font-size: 0.75em; color: var(--text-muted); margin-bottom: 0.3em; font-style: italic;">
+    A balanced spec produces balanced code. An unbalanced spec produces <span class="accent">creative fiction</span>.
   </p>
-  <div style="display: flex; align-items: center; justify-content: center; gap: 4em;">
+  <p style="font-size: 0.5em; color: var(--text-muted); margin-bottom: 0.4em; letter-spacing: 0.03em; line-height: 1.6;">
+    <span style="color: var(--text-primary); font-weight: 600;">completeness</span> — Can the LLM understand the full scope? &nbsp;&middot;&nbsp;
+    <span style="color: var(--text-primary); font-weight: 600;">clarity</span> — Is there only one way to interpret this?<br>
+    <span style="color: var(--text-primary); font-weight: 600;">constraints</span> — Does the LLM know what NOT to build? &nbsp;&middot;&nbsp;
+    <span style="color: var(--text-primary); font-weight: 600;">specificity</span> — Are there concrete, testable details?
+  </p>
+  <div style="display: flex; align-items: center; justify-content: center; gap: 3em;">
     <!-- Bad diamond -->
     <div style="text-align: center;">
-      <svg width="420" height="420" viewBox="-60 -10 600 500" style="overflow: visible;">
+      <svg width="280" height="280" viewBox="-60 -10 600 500" style="overflow: visible;">
         <line x1="240" y1="40" x2="240" y2="440" stroke="#444" stroke-width="1"/>
         <line x1="40" y1="240" x2="440" y2="240" stroke="#444" stroke-width="1"/>
         <polygon points="240,60 350,240 240,400 100,240" fill="rgba(224,43,29,0.15)" stroke="#E02B1D" stroke-width="3"/>
-        <text x="240" y="20" text-anchor="middle" fill="#ccc" font-size="20" font-family="JetBrains Mono">completeness</text>
-        <text x="460" y="245" text-anchor="start" fill="#ccc" font-size="20" font-family="JetBrains Mono">clarity</text>
-        <text x="240" y="475" text-anchor="middle" fill="#ccc" font-size="20" font-family="JetBrains Mono">constraints</text>
-        <text x="20" y="245" text-anchor="end" fill="#ccc" font-size="20" font-family="JetBrains Mono">specificity</text>
+        <text x="240" y="20" text-anchor="middle" fill="#ccc" font-size="22" font-family="JetBrains Mono">completeness</text>
+        <text x="460" y="245" text-anchor="start" fill="#ccc" font-size="22" font-family="JetBrains Mono">clarity</text>
+        <text x="240" y="475" text-anchor="middle" fill="#ccc" font-size="22" font-family="JetBrains Mono">constraints</text>
+        <text x="20" y="245" text-anchor="end" fill="#ccc" font-size="22" font-family="JetBrains Mono">specificity</text>
       </svg>
-      <p style="font-size: 1.5em; color: #E02B1D; font-weight: 700; margin-top: 0.4em;">Unbalanced</p>
-      <p style="font-size: 1.1em; color: var(--text-muted);">AI fills the gaps</p>
+      <p style="font-size: 1.2em; color: #E02B1D; font-weight: 700; margin-top: 0.2em;">Unbalanced</p>
+      <p style="font-size: 0.85em; color: var(--text-muted);">AI fills the gaps</p>
     </div>
     <!-- Good diamond -->
     <div style="text-align: center;">
-      <svg width="420" height="420" viewBox="-60 -10 600 500" style="overflow: visible;">
+      <svg width="280" height="280" viewBox="-60 -10 600 500" style="overflow: visible;">
         <line x1="240" y1="40" x2="240" y2="440" stroke="#444" stroke-width="1"/>
         <line x1="40" y1="240" x2="440" y2="240" stroke="#444" stroke-width="1"/>
         <polygon points="240,70 400,240 240,410 80,240" fill="rgba(62,207,142,0.15)" stroke="#3ECF8E" stroke-width="3"/>
-        <text x="240" y="20" text-anchor="middle" fill="#ccc" font-size="20" font-family="JetBrains Mono">completeness</text>
-        <text x="460" y="245" text-anchor="start" fill="#ccc" font-size="20" font-family="JetBrains Mono">clarity</text>
-        <text x="240" y="475" text-anchor="middle" fill="#ccc" font-size="20" font-family="JetBrains Mono">constraints</text>
-        <text x="20" y="245" text-anchor="end" fill="#ccc" font-size="20" font-family="JetBrains Mono">specificity</text>
+        <text x="240" y="20" text-anchor="middle" fill="#ccc" font-size="22" font-family="JetBrains Mono">completeness</text>
+        <text x="460" y="245" text-anchor="start" fill="#ccc" font-size="22" font-family="JetBrains Mono">clarity</text>
+        <text x="240" y="475" text-anchor="middle" fill="#ccc" font-size="22" font-family="JetBrains Mono">constraints</text>
+        <text x="20" y="245" text-anchor="end" fill="#ccc" font-size="22" font-family="JetBrains Mono">specificity</text>
       </svg>
-      <p style="font-size: 1.5em; color: var(--green); font-weight: 700; margin-top: 0.4em;">Balanced</p>
-      <p style="font-size: 1.1em; color: var(--text-muted);">AI knows what to build</p>
+      <p style="font-size: 1.2em; color: var(--green); font-weight: 700; margin-top: 0.2em;">Balanced</p>
+      <p style="font-size: 0.85em; color: var(--text-muted);">AI knows what to build</p>
     </div>
   </div>
-  <div style="display: flex; align-items: center; justify-content: center; gap: 2em; margin-top: 1em;">
+  <div style="display: flex; align-items: center; justify-content: center; gap: 2em; margin-top: 0.5em;">
     <!-- Score bars -->
-    <div style="text-align: left; background: var(--code-bg); border: 1px solid #2a2a4a; border-radius: 8px; padding: 0.6em 1.2em; font-family: 'JetBrains Mono', monospace; font-size: 0.5em; line-height: 1.6; color: var(--text-muted);">
+    <div style="text-align: left; background: var(--code-bg); border: 1px solid #2a2a4a; border-radius: 8px; padding: 0.4em 1em; font-family: 'JetBrains Mono', monospace; font-size: 0.45em; line-height: 1.5; color: var(--text-muted);">
       completeness &nbsp;&nbsp; <span style="color: var(--accent);">█████████████</span><span style="color: #444;">░░░░░░░</span> &nbsp; 0.66<br>
       clarity &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: var(--accent);">████████████</span><span style="color: #444;">░░░░░░░░</span> &nbsp; 0.58<br>
       constraints &nbsp;&nbsp; <span style="color: #E02B1D;">██</span><span style="color: #444;">░░░░░░░░░░░░░░░░░░</span> &nbsp; <span style="color: #E02B1D;">0.12</span><br>
       specificity &nbsp;&nbsp; <span style="color: var(--accent);">█████████</span><span style="color: #444;">░░░░░░░░░░░</span> &nbsp; 0.46
     </div>
     <!-- Balanced score bars -->
-    <div style="text-align: left; background: var(--code-bg); border: 1px solid #2a2a4a; border-radius: 8px; padding: 0.6em 1.2em; font-family: 'JetBrains Mono', monospace; font-size: 0.5em; line-height: 1.6; color: var(--text-muted);">
+    <div style="text-align: left; background: var(--code-bg); border: 1px solid #2a2a4a; border-radius: 8px; padding: 0.4em 1em; font-family: 'JetBrains Mono', monospace; font-size: 0.45em; line-height: 1.5; color: var(--text-muted);">
       completeness &nbsp;&nbsp; <span style="color: var(--green);">████████████████</span><span style="color: #444;">░░░░</span> &nbsp; <span style="color: var(--green);">0.82</span><br>
       clarity &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: var(--green);">███████████████</span><span style="color: #444;">░░░░░</span> &nbsp; <span style="color: var(--green);">0.78</span><br>
       constraints &nbsp;&nbsp; <span style="color: var(--green);">██████████████</span><span style="color: #444;">░░░░░░</span> &nbsp; <span style="color: var(--green);">0.74</span><br>
